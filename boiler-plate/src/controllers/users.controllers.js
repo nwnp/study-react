@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 const signup = (req, res, next) => {
   const user = new User(req.body);
