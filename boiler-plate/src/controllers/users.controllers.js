@@ -35,6 +35,13 @@ const login = (req, res, next) => {
   });
 };
 
+const logout = (req, res, next) => {
+  User.findByIdAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).json({ success: true });
+  });
+};
+
 const verify = (req, res, next) => {
   res.status(200).json({
     id: req.user._id,
@@ -48,4 +55,5 @@ module.exports = {
   signup,
   login,
   verify,
+  logout,
 };
