@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
   name: {
     type: String,
-    maxlength: 50,
   },
   email: {
     type: String,
@@ -13,11 +13,9 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    maxlength: 5,
   },
   lastname: {
     type: String,
-    maxlength: 50,
   },
   role: {
     type: Number,
@@ -34,7 +32,7 @@ const userSchema = mongoose.Schema({
 
 // user save 전에 Dao 역할
 userSchema.pre("save", function (next) {
-  var user = this;
+  const user = this;
 
   // save 요청일 때 password의 변화가 감지될 때만
   // 즉, 수정이나 회원가입 할 때만 감지
@@ -52,6 +50,27 @@ userSchema.pre("save", function (next) {
     next();
   }
 });
+
+userSchema.methods.comparePassword = function (plainPassword, callback) {
+  const user = this;
+  bcrypt.compare(plainPassword, user.password, function (err, isMatch) {
+    if (err) return callback(err);
+    callback(null, isMatch);
+  });
+};
+
+userSchema.methods.generateToken = function (callback) {
+  const user = this;
+  const payload = {
+    id: user._id.toHexString(),
+  };
+  const token = jwt.sign(payload, "secretkey");
+  user.token = token;
+  user.save((err, user) => {
+    if (err) return callback(err);
+    callback(err, user);
+  });
+};
 
 const User = mongoose.model("User", userSchema);
 
