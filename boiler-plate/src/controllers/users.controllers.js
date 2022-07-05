@@ -35,7 +35,17 @@ const login = (req, res, next) => {
   });
 };
 
+const verify = (req, res, next) => {
+  res.status(200).json({
+    id: req.user._id,
+    email: req.user.email,
+    role: req.user.role,
+    token: req.user.token,
+  });
+};
+
 module.exports = {
   signup,
   login,
+  verify,
 };
