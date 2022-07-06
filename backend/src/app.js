@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -23,8 +24,12 @@ app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors("*"));
 
 app.use("/api", [userRouter]);
+app.get("/test", (req, res, next) => {
+  res.send("hello world!");
+});
 
 app.listen(PORT, () => {
   console.log(PORT, "The server is on");
